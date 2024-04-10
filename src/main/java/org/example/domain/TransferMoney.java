@@ -6,19 +6,17 @@ import org.example.errors.MakeDebitException;
 
 import java.util.logging.Logger;
 
-public class TransferMoney {
-    private final int money;
-    private final Account sendAccount;
-    private final Account takeAccount;
+public class TransferMoney extends Account{
+    private int money;
+    private Account sendAccount;
+    private Account takeAccount;
     private final Logger logger = Logger.getLogger(TransferMoney.class.getName());
 
-    public TransferMoney(Account sendAccount, Account takeAccount, int money) {
-        this.sendAccount = sendAccount;
-        this.takeAccount = takeAccount;
-        this.money = money;
+    public TransferMoney(String id) {
+        super(id);
     }
 
-    public void execute() throws LimitAccountException, MakeDebitException {
+    public void execute(int money) throws LimitAccountException, MakeDebitException {
         sendAccount.setMoney(sendAccount.getMoney() - money);
         takeAccount.setMoney(takeAccount.getMoney() + money);
         if (sendAccount.getMoney() < 0) {
