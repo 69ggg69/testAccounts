@@ -1,11 +1,23 @@
 package org.example.entity;
 
+import org.example.domain.AccountRepository;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 public class Account {
     private String id;
     private int money;
-    public Account(String id, int money) {
+    protected final Lock lock;
+    private final Logger logger = Logger.getLogger(Account.class.getName());
+
+
+    public Account(String id) {
         this.id = id;
-        this.money = money;
+        this.money = AccountRepository.getRandomAmount();
+        this.lock = new ReentrantLock();
     }
 
     public String getId() {
@@ -22,6 +34,17 @@ public class Account {
 
     public void setMoney(int money) {
         this.money = money;
+    }
+    public int getCurrentAmount() {
+        return this.money;
+    }
+
+    public void lockAccount() {
+        lock.lock();
+    }
+
+    public void unlockAccount() {
+        lock.unlock();
     }
 
     @Override
