@@ -1,6 +1,5 @@
 package org.example.domain;
 
-import org.example.entity.Account;
 import org.example.util.ApplicationProperties;
 
 import java.util.Properties;
@@ -20,18 +19,6 @@ public class AccountRepository {
         return minAmount + (int) (Math.random() * (maxAmount - minAmount + 1));
     }
 
-//    public static Integer getRandomDelay() {
-//        return Integer.parseInt(appProps.getProperty("min_delay")) + (int) (Math.random()
-//                * (Integer.parseInt(appProps.getProperty("max_delay"))
-//                - Integer.parseInt(appProps.getProperty("min_delay"))) + 1);
-//    }
-//
-//    public static Integer getRandomAmount() {
-//        return Integer.parseInt(appProps.getProperty("min_amount")) + (int) (Math.random()
-//                * (Integer.parseInt(appProps.getProperty("max_amount"))
-//                - Integer.parseInt(appProps.getProperty("min_amount"))) + 1);
-//    }
-
     public static int[] getRandomPairByLimit(int limit) {
         int[] result = new int[2];
         int first = (int) (Math.random() * limit);
@@ -49,7 +36,7 @@ public class AccountRepository {
         return UUID.randomUUID().toString();
     }
 
-    public static Integer getStartAmount() {
+    public static int getStartAmount() {
         return Integer.parseInt(appProps.getProperty("start_amount"));
     }
 }

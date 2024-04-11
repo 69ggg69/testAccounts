@@ -4,15 +4,11 @@ import org.example.domain.AccountRepository;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class Account {
     private String id;
     private int money;
     protected final Lock lock;
-    private final Logger logger = Logger.getLogger(Account.class.getName());
-
 
     public Account(String id) {
         this.id = id;

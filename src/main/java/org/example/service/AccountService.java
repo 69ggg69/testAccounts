@@ -44,7 +44,7 @@ public class AccountService {
         try {
             accounts.get(0).lockAccount();
             accounts.get(1).lockAccount();
-            transferMoney.execute(money);
+            transferMoney.transfer(money);
             transferMoney.makeEnrolment(money);
         } catch (MakeDebitException e) {
             try {

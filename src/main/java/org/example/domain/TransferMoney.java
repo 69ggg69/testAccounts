@@ -18,8 +18,8 @@ public class TransferMoney {
         this.money = money;
     }
 
-    public void execute(int money) throws LimitAccountException, MakeDebitException {
-        if (sendAccount.getMoney() < money) {
+    public void transfer(int money) throws LimitAccountException, MakeDebitException {
+        if (sendAccount.getMoney() < 0) {
             logger.info("Недостаточно средств на счете " + sendAccount.getId() + ". Отмена операции.");
             throw new LimitAccountException("Недостаточно средств на счете " + sendAccount.getId());
         }
