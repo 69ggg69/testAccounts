@@ -6,33 +6,32 @@ import org.example.errors.MakeDebitException;
 
 import java.util.logging.Logger;
 
-public class TransferMoney extends Account{
-    private int money;
-    private Account sendAccount;
-    private Account takeAccount;
+public class TransferMoney {
+    private final int money;
+    private final Account sendAccount;
+    private final Account takeAccount;
     private final Logger logger = Logger.getLogger(TransferMoney.class.getName());
 
-    public TransferMoney(String id) {
-        super(id);
+    public TransferMoney(Account sendAccount, Account takeAccount, int money) {
+        this.sendAccount = sendAccount;
+        this.takeAccount = takeAccount;
+        this.money = money;
     }
 
     public void execute(int money) throws LimitAccountException, MakeDebitException {
+        if (sendAccount.getMoney() < money) {
+            logger.info("Недостаточно средств на счете " + sendAccount.getId() + ". Отмена операции.");
+            throw new LimitAccountException("Недостаточно средств на счете " + sendAccount.getId());
+        }
         sendAccount.setMoney(sendAccount.getMoney() - money);
         takeAccount.setMoney(takeAccount.getMoney() + money);
-        if (sendAccount.getMoney() < 0) {
-            logger.info("Недостаточно средств на счете " + sendAccount.getId());
-            throw new LimitAccountException("Недостаточно средств на счете " + sendAccount.getId());
-        } else {
-            try {
-                sendAccount.setMoney(sendAccount.getMoney());
-            } catch (Exception e) {
-                throw new MakeDebitException("Внутренняя ошибка списания средств");
-            }
-        }
-    }
+
+}
+
     public void makeEnrolment(int money) throws InterruptedException {
         sendAccount.setMoney(takeAccount.getMoney() + money);
     }
+
     @Override
     public String toString() {
         return "TransferMoney{" +

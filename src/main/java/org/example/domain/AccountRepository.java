@@ -8,18 +8,29 @@ import java.util.UUID;
 
 public class AccountRepository {
     private static final Properties appProps = ApplicationProperties.getAppProps();
-
-    public static Integer getRandomDelay() {
-        return Integer.parseInt(appProps.getProperty("min_delay")) + (int) (Math.random()
-                * (Integer.parseInt(appProps.getProperty("max_delay"))
-                - Integer.parseInt(appProps.getProperty("min_delay"))) + 1);
+    public static int getRandomDelay() {
+        int minDelay = Integer.parseInt(appProps.getProperty("min_delay"));
+        int maxDelay = Integer.parseInt(appProps.getProperty("max_delay"));
+        return minDelay + (int) (Math.random() * (maxDelay - minDelay + 1));
     }
 
-    public static Integer getRandomAmount() {
-        return Integer.parseInt(appProps.getProperty("min_amount")) + (int) (Math.random()
-                * (Integer.parseInt(appProps.getProperty("max_amount"))
-                - Integer.parseInt(appProps.getProperty("min_amount"))) + 1);
+    public static int getRandomAmount() {
+        int minAmount = Integer.parseInt(appProps.getProperty("min_amount"));
+        int maxAmount = Integer.parseInt(appProps.getProperty("max_amount"));
+        return minAmount + (int) (Math.random() * (maxAmount - minAmount + 1));
     }
+
+//    public static Integer getRandomDelay() {
+//        return Integer.parseInt(appProps.getProperty("min_delay")) + (int) (Math.random()
+//                * (Integer.parseInt(appProps.getProperty("max_delay"))
+//                - Integer.parseInt(appProps.getProperty("min_delay"))) + 1);
+//    }
+//
+//    public static Integer getRandomAmount() {
+//        return Integer.parseInt(appProps.getProperty("min_amount")) + (int) (Math.random()
+//                * (Integer.parseInt(appProps.getProperty("max_amount"))
+//                - Integer.parseInt(appProps.getProperty("min_amount"))) + 1);
+//    }
 
     public static int[] getRandomPairByLimit(int limit) {
         int[] result = new int[2];
@@ -37,7 +48,8 @@ public class AccountRepository {
     public static String randomId() {
         return UUID.randomUUID().toString();
     }
-    public static Integer getStartAmount(){
+
+    public static Integer getStartAmount() {
         return Integer.parseInt(appProps.getProperty("start_amount"));
     }
 }

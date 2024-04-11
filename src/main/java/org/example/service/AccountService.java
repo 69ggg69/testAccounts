@@ -17,24 +17,25 @@ public class AccountService {
     private final Logger logger = LogManager.getLogger(AccountService.class);
     private final Comparator<Account> comparator = Comparator.comparing(Account::getId);
 
-    public void makeTransactionalFromTo(TransferMoney sendAccount, TransferMoney takeAccount, int money) {
+    public void makeTransactionalFromTo(Account sendAccount, Account takeAccount, int money) {
         logger.info("Начата транзакция перевода средств с аккаунта " + sendAccount.getId() + " на аккаунт "
                 + takeAccount.getId() + " сумма транзакции - " + money + ". В потоке - " + Thread.currentThread().getName());
         try {
-            if (money == 0 && Integer.signum(money) < 0) throw new BadMoneyException("Неверная сумма перевода");
+            if (money <= 0) throw new BadMoneyException("Неверная сумма перевода");
             makeDebit(sendAccount, takeAccount, money);
             logger.info("Завершена транзакция перевода средств с аккаунта " + sendAccount.getId()
                     + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money + ". В потоке - " + Thread.currentThread().getName());
         } catch (LimitAccountException e) {
             logger.warn("Транзакция перевода средств с аккаунта " + sendAccount.getId()
-                    + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money + ". Отменена. Не достаточно средств на счете отправителя");
+                    + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money + ". Отменена. Недостаточно средств на счете отправителя");
         } catch (BadMoneyException e) {
             logger.warn("Транзакция перевода средств с аккаунта " + sendAccount.getId()
                     + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money + ". Отменена. Некорректная сумма перевода");
         }
     }
 
-    private void makeDebit(TransferMoney sendAccount, TransferMoney takeAccount, int money) throws LimitAccountException {
+    private void makeDebit(Account sendAccount, Account takeAccount, int money) throws LimitAccountException {
+        TransferMoney transferMoney = new TransferMoney(sendAccount, takeAccount, money);
         logger.info("Начат перевод средств с аккаунта " + sendAccount.getId() + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money);
         List<Account> accounts = new ArrayList<>();
         accounts.add(takeAccount);
@@ -43,11 +44,11 @@ public class AccountService {
         try {
             accounts.get(0).lockAccount();
             accounts.get(1).lockAccount();
-            sendAccount.execute(money);
-            takeAccount.makeEnrolment(money);
+            transferMoney.execute(money);
+            transferMoney.makeEnrolment(money);
         } catch (MakeDebitException e) {
             try {
-                sendAccount.makeEnrolment(money);
+                transferMoney.makeEnrolment(money);
             } catch (InterruptedException ex) {
                 logger.error("Транзакция перевода средств с аккаунта " + sendAccount.getId()
                         + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money + ". Отменена." +
@@ -56,7 +57,7 @@ public class AccountService {
         } catch (InterruptedException e) {
             logger.error("Транзакция перевода средств с аккаунта " + sendAccount.getId()
                     + " на аккаунт " + takeAccount.getId() + " сумма транзакции  - " + money + ". Отменена." +
-                    " Фатальная ошибка перевода. Средства в объеме - " + money + ". Переведены на счет - " + sendAccount.getId());
+                    " Ошибка перевода. Средства в объеме - " + money + ". Переведены на счет - " + sendAccount.getId());
         } finally {
             accounts.get(0).unlockAccount();
             accounts.get(1).unlockAccount();
@@ -80,7 +81,7 @@ public class AccountService {
     }
 
     public void makeShuffleTransactionsWithRandomAmount(List<Account> accounts, int[] pair) {
-        makeTransactionalFromTo((TransferMoney) accounts.get(pair[0]), (TransferMoney) accounts.get(pair[1]), AccountRepository.getRandomAmount());
+        makeTransactionalFromTo(accounts.get(pair[0]), accounts.get(pair[1]), AccountRepository.getRandomAmount());
     }
 
 }
